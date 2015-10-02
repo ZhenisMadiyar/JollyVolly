@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/tab_bar_bg"
+        android:id="@+id/linearLayout2">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:text="ОБРАТНАЯ СВЯЗЬ"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="30sp" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/linearLayout2">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editTextName"
+            android:hint="Имя"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="72dp"
+            android:layout_alignLeft="@+id/editTextTelephon"
+            android:layout_alignStart="@+id/editTextTelephon"
+            android:layout_alignRight="@+id/editTextText"
+            android:layout_alignEnd="@+id/editTextText" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:hint="Email"
+            android:id="@+id/editTextEmail"
+            android:layout_gravity="center_horizontal"
+            android:layout_below="@+id/editTextName"
+            android:layout_alignLeft="@+id/editTextName"
+            android:layout_alignStart="@+id/editTextName"
+            android:layout_alignRight="@+id/editTextName"
+            android:layout_alignEnd="@+id/editTextName" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:ems="10"
+            android:hint="Телефон"
+            android:id="@+id/editTextTelephon"
+            android:layout_gravity="center_horizontal"
+            android:layout_below="@+id/editTextEmail"
+            android:layout_alignLeft="@+id/editTextText"
+            android:layout_alignStart="@+id/editTextText"
+            android:layout_alignRight="@+id/editTextText"
+            android:layout_alignEnd="@+id/editTextText" />
+
+        <EditText
+            android:layout_width="321dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Текст"
+            android:id="@+id/editTextText"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/editTextTelephon"
+            android:layout_above="@+id/buttonSend" />
+
+        <Button
+            android:layout_width="288dp"
+            android:layout_height="wrap_content"
+            android:text="Отправить"
+            android:id="@+id/buttonSend"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_alignRight="@+id/editTextText"
+            android:layout_alignEnd="@+id/editTextText"
+            android:layout_alignLeft="@+id/editTextText"
+            android:layout_alignStart="@+id/editTextText" />
+    </RelativeLayout>
+
+</RelativeLayout>

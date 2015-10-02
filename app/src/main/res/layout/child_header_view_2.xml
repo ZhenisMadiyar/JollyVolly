@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:id="@+id/textSizeLay"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="@string/hello_world"
+            android:textColor="#1919A3"
+            android:textSize="16sp"
+            android:visibility="invisible"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="200 tg"
+            android:id="@+id/textViewSize1"
+            android:layout_marginLeft="91dp"
+            android:textColor="#000"
+            android:layout_marginStart="91dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="200 tg"
+            android:id="@+id/textViewSize2"
+            android:textColor="#000"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_below="@+id/textSizeLay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/textViewChild"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_world"
+        android:textColor="#000"
+        android:textSize="16sp"
+        android:visibility="invisible"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="200"
+        android:id="@+id/imageSize1"
+        android:layout_marginLeft="81dp"
+        android:layout_marginStart="81dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="200"
+        android:id="@+id/imageSize2"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp" />
+    </LinearLayout>
+</RelativeLayout>

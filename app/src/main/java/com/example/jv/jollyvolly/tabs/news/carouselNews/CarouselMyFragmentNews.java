@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,6 +22,7 @@ import com.example.jv.jollyvolly.tabs.news.StoreDatabaseNews;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -70,8 +72,11 @@ public class CarouselMyFragmentNews extends Fragment {
         final TextView likeCountTV = (TextView) l.findViewById(R.id.textViewCompLikeCount);
         final TextView podrobnee = (TextView) l.findViewById(R.id.textViewCompPodrobno);
         final ImageButton like = (ImageButton) l.findViewById(R.id.imageButtonLikeComp);
+        ImageView imageViewSale = (ImageView) l.findViewById(R.id.imageViewCompetition);
 
-
+        Picasso.with(getActivity())
+                .load(imageUrl)
+                .into(imageViewSale);
         titleTV.setText(title);
         descriptionTV.setText(description);
         likeCountTV.setText(likeCount + "");
@@ -98,6 +103,7 @@ public class CarouselMyFragmentNews extends Fragment {
                 intent.putExtra("likeCount", News.arrayListNewsComp.get(pos).getLikeCount());
                 intent.putExtra("liked", News.arrayListNewsComp.get(pos).getLiked());
                 startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
             }
         });
 

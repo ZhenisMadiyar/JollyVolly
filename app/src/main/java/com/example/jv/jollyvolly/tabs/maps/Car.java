@@ -15,7 +15,7 @@ public class Car implements Parcelable {
     String imageUrl;
     int id_car;
 
-    public Car(String carId, String status, String latLang, String time, String address, String imageUrl, int id_car) {
+    public Car(String carId, String status, String latLang, String time, String address, int id_car) {
         this.carId = carId;
         this.status = status;
         this.latLang = latLang;

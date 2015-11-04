@@ -161,7 +161,7 @@ public class MenuList extends Fragment {
         expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, final int groupPosition, long id) {
-                Toast.makeText(getActivity(), "Clicked" + groupPosition, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), "Clicked" + groupPosition, Toast.LENGTH_LONG).show();
 //                if (parent.isGroupExpanded(groupPosition)) {
 //                    parent.collapseGroup(groupPosition);
 //                }else {
@@ -182,7 +182,7 @@ public class MenuList extends Fragment {
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Toast.makeText(getActivity(), "Clicked" + childPosition, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), "Clicked" + childPosition, Toast.LENGTH_LONG).show();
                 return false;
             }
         });

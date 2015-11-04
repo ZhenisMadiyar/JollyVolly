@@ -55,6 +55,8 @@ public class Podrobnee extends Activity {
             @Override
             public void onClick(View v) {
                 finish();
+//                startActivity(new Intent(Podrobnee.this, TabsActivity.class));
+                overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
             }
         });
 

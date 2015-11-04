@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="90dp"
+    android:background="#fff"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -22,52 +23,70 @@
         android:id="@+id/imageViewCar"
         android:layout_width="100dp"
         android:layout_height="60dp"
-        android:layout_gravity="center_horizontal"
-        android:src="@mipmap/ic_launcher"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
         android:layout_marginLeft="47dp"
-        android:layout_marginStart="47dp" />
+        android:layout_marginStart="47dp"
+        android:src="@drawable/cars_jollyvolly" />
 
     <TextView
         android:id="@+id/textAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/root"
+        android:layout_margin="5dp"
+        android:layout_toEndOf="@+id/imageView2"
+        android:layout_toRightOf="@+id/imageView2"
         android:gravity="center"
         android:text="BANNER"
-        android:textSize="15sp"
-        android:layout_margin="5dp"
-        android:layout_below="@+id/root"
-        android:layout_toRightOf="@+id/imageView2"
-        android:layout_toEndOf="@+id/imageView2" />
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/textViewTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Medium Text"
-        android:layout_marginBottom="5dp"
-        android:textSize="15sp"
         android:layout_alignBottom="@+id/imageViewCar"
         android:layout_alignLeft="@+id/textAddress"
-        android:layout_alignStart="@+id/textAddress" />
+        android:layout_alignStart="@+id/textAddress"
+        android:layout_marginBottom="5dp"
+        android:text="Medium Text"
+        android:textSize="15sp" />
 
     <ImageView
-        android:layout_width="20dp"
-        android:layout_height="20dp"
         android:id="@+id/imageView2"
-        android:src="@drawable/car_address"
-        android:layout_alignTop="@+id/textAddress"
-        android:layout_centerHorizontal="true" />
-
-    <ImageView
         android:layout_width="20dp"
         android:layout_height="20dp"
+        android:layout_alignLeft="@+id/imageView3"
+        android:layout_alignStart="@+id/imageView3"
+        android:layout_below="@+id/root"
+        android:src="@drawable/car_address" />
+
+    <ImageView
         android:id="@+id/imageView3"
-        android:src="@drawable/time_work"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_alignTop="@+id/textViewTime"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginLeft="55dp"
+        android:layout_marginStart="55dp"
+        android:layout_toEndOf="@+id/imageViewCar"
+        android:layout_toRightOf="@+id/imageViewCar"
+        android:src="@drawable/time_work" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="20dp"
+        android:layout_height="40dp"
+        android:layout_alignBottom="@+id/textViewTime"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@+id/textViewTime"
+        android:layout_toRightOf="@+id/textViewTime"
+        android:background="@drawable/arrow" />
 
 
 </RelativeLayout>

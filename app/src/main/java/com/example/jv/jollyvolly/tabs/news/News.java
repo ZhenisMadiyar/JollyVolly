@@ -1,6 +1,8 @@
 package com.example.jv.jollyvolly.tabs.news;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -28,7 +30,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -69,6 +74,9 @@ public class News extends Fragment {
     SQLiteDatabase sqdbReadSale;
     private static View view;
 
+    public static final String MyPrefs2 = "MyPrefs2";
+    SharedPreferences preferences;
+
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         if (view != null) {
@@ -89,6 +97,45 @@ public class News extends Fragment {
         storeDatabaseSale = new StoreDatabaseSale(getActivity());
         sqdbWriteSale = storeDatabaseSale.getWritableDatabase();
         sqdbReadSale = storeDatabaseSale.getReadableDatabase();
+
+        preferences = getActivity().getSharedPreferences(MyPrefs2, Context.MODE_PRIVATE);
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        if (preferences.getString("last_date", null) == null) {
+            String now = format.format(Calendar.getInstance().getTime());
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("last_date", now);
+            editor.apply();
+            Log.i("PREFERENCES", "@null");
+        } else {
+            String lastDate = preferences.getString("last_date", "");
+            String now = format.format(Calendar.getInstance().getTime());
+            Date d1 = null;
+            Date d2 = null;
+            try {
+                d1 = format.parse(lastDate);
+                d2 = format.parse(now);
+
+                //in milliseconds!
+                long diff = d2.getTime() - d1.getTime();
+
+                long diffSeconds = diff / 1000 % 60;
+                long diffMinutes = diff / (60 * 1000) % 60;
+                long diffHours = diff / (60 * 60 * 1000) % 24;
+                long diffDays = diff / (24 * 60 * 60 * 1000);
+
+                Log.i("diffDays", diffDays + "");
+                Log.i("diffHours", diffHours + "");
+                Log.i("diffMinutes", diffMinutes + "");
+                Log.i("diffSeconds", diffSeconds + "");
+                if (diffDays == 1) {
+                    refersh();
+                    Toast.makeText(getActivity(), "REFRESHED!", Toast.LENGTH_LONG).show();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         Cursor cursorSale = sqdbReadSale.query("sale", new String[]
                         {"objectId, title, description, imageUrl, likeCount, liked"},
@@ -282,7 +329,7 @@ public class News extends Fragment {
                                     dotsCorp[j].setTextColor(getResources().getColor(android.R.color.darker_gray));
                                     dotsLayoutCorp.addView(dotsCorp[j]);
                                 }
-                                dotsCorp[0].setTextColor(getResources().getColor(android.R.color.holo_blue_light));
+                                dotsCorp[0].setTextColor(getResources().getColor(android.R.color.black));
                             } catch (JSONException e1) {
                                 e1.printStackTrace();
                             }
@@ -316,7 +363,7 @@ public class News extends Fragment {
             // Necessary or the pager will only have one extra page to show
             // make this at least however many pages you can see
             viewPagerNews.setOffscreenPageLimit(2);
-            Log.i("2", arrayListNewsComp.get(1).getDescription());
+//            Log.i("2", arrayListNewsComp.get(1).getDescription());
             // Set margin for pages as a negative number, so a part of next and
             // previous pages will be showed
 //                            viewPagerNews.setPageMargin(-50);dotsCount = arrayListNewsSale.size();
@@ -330,7 +377,7 @@ public class News extends Fragment {
                 dotsCorp[j].setTextColor(getResources().getColor(android.R.color.darker_gray));
                 dotsLayoutCorp.addView(dotsCorp[j]);
             }
-            dotsCorp[0].setTextColor(getResources().getColor(android.R.color.holo_blue_light));
+            dotsCorp[0].setTextColor(getResources().getColor(android.R.color.black));
 
             cursor.close();
         }
@@ -341,5 +388,12 @@ public class News extends Fragment {
     public void onAttach(Activity activity) {
         myContext = (FragmentActivity) activity;
         super.onAttach(activity);
+    }
+
+    private void refersh() {
+        storeDatabase.cleanTable(sqdbRead);
+        storeDatabaseSale.cleanTable(sqdbReadSale);
+        Log.i("Cache", "Cleaned");
+//        Toast.makeText(getApplicationContext(), "All databases cleaned!", Toast.LENGTH_SHORT).show();
     }
 }

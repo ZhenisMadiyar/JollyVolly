@@ -25,91 +25,95 @@
             android:layout_gravity="center"
             android:gravity="center_horizontal"
             android:text="КАРТА"
-            android:textColor="@android:color/holo_red_dark"
+            android:textColor="#ff0000"
             android:textSize="30sp" />
     </LinearLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imageViewPodr"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="130dp"
-            android:layout_gravity="center"
-            android:src="@mipmap/ic_launcher" />
-
-        <TextView
-            android:id="@+id/textViewPodrTitle"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="Конкурс от JollyWolly!"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/holo_blue_light" />
+            android:orientation="vertical">
 
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/imageViewPodr"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:layout_gravity="center"
+                android:src="@mipmap/ic_launcher" />
 
             <TextView
-                android:id="@+id/textViewDesc"
-                android:layout_width="230dp"
+                android:id="@+id/textViewPodrTitle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginLeft="20dp"
-                android:paddingRight="5dp"
-                android:text="desc" />
+                android:text="Конкурс от JollyWolly!"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@android:color/holo_blue_light" />
 
-            <ImageButton
-                android:id="@+id/imageButtonLikePodr"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_gravity="right"
-                android:layout_marginEnd="28dp"
-                android:layout_marginRight="28dp"
-                android:background="@drawable/like_not_pressed"
-                android:padding="5dp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_below="@+id/textViewDesc"
-                android:layout_alignRight="@+id/textViewDesc"
-                android:layout_alignEnd="@+id/textViewDesc">
-
+                android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/textViewPodrLikeCount"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/textViewDesc"
+                    android:layout_width="230dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginLeft="5dp"
-                    android:layout_toRightOf="@+id/imageView4"
-                    android:gravity="center"
-                    android:text="New Text"
-                    android:textColor="#000"
-                    android:textSize="16sp" />
-
-                <ImageView
-                    android:id="@+id/imageView4"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginStart="20dp"
-                    android:src="@drawable/heart" />
+                    android:paddingRight="5dp"
+                    android:text="desc" />
+
+                <ImageButton
+                    android:id="@+id/imageButtonLikePodr"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="right"
+                    android:layout_marginEnd="28dp"
+                    android:layout_marginRight="28dp"
+                    android:background="@drawable/like_not_pressed"
+                    android:padding="5dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp"
+                    android:layout_alignEnd="@+id/textViewDesc"
+                    android:layout_alignRight="@+id/textViewDesc"
+                    android:layout_below="@+id/textViewDesc">
+
+                    <TextView
+                        android:id="@+id/textViewPodrLikeCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginLeft="5dp"
+                        android:layout_toRightOf="@+id/imageView4"
+                        android:gravity="center"
+                        android:text="New Text"
+                        android:textColor="#000"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/imageView4"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginStart="20dp"
+                        android:src="@drawable/heart" />
+                </RelativeLayout>
             </RelativeLayout>
-        </RelativeLayout>
-    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

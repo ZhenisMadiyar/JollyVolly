@@ -59,9 +59,8 @@ public class SplashActivity extends Activity {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     JSONObject estimatedData = jsonObject.getJSONObject("estimatedData");
-                                    JSONObject jsonImage = estimatedData.getJSONObject("image");
+//                                    JSONObject jsonImage = estimatedData.getJSONObject("image");
 
-                                    String imageUrl = jsonImage.getString("url");
 //                                    String carId = estimatedData.getString("id");
                                     String objectId = jsonObject.getString("objectId");
                                     String status = estimatedData.getString("status");
@@ -73,7 +72,7 @@ public class SplashActivity extends Activity {
 //                                    double lat = Double.parseDouble(latLang[0]);
 //                                    double lng = Double.parseDouble(latLang[1]);
 //                                    LatLng latLng = new LatLng(lat, lng);
-                                    arrayList.add(new Car(objectId, status, lat_lang, time, address, imageUrl, id_car));
+                                    arrayList.add(new Car(objectId, status, lat_lang, time, address, id_car));
                                 }
                                 progressBar.setVisibility(View.GONE);
                                 Intent intent = new Intent(SplashActivity.this, TabsActivity.class);

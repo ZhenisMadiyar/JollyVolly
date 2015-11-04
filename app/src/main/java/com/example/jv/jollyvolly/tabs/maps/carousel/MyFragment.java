@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.example.jv.jollyvolly.R;
 import com.example.jv.jollyvolly.tabs.maps.MobiliuzCar;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -49,19 +48,9 @@ public class MyFragment extends Fragment {
 
 		textViewAddress.setText(this.getArguments().getString("address"));
 		textViewTime.setText(this.getArguments().getString("time"));
-		Picasso.with(getActivity())
-				.load(getArguments().getString("imageUrl"))
-				.into(iv);
 
 		MyLinearLayout root = (MyLinearLayout) l.findViewById(R.id.root);
 
-//		iv.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View view) {
-//				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getArguments().getString("objectUrl")));
-//				startActivity(browserIntent);
-//			}
-//		});
 		float scale = this.getArguments().getFloat("scale");
 		root.setScaleBoth(scale);
 		

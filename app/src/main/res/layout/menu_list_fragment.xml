@@ -15,7 +15,7 @@
             android:layout_gravity="center"
             android:gravity="center_horizontal"
             android:text="МЕНЮ"
-            android:textColor="@android:color/holo_red_dark"
+            android:textColor="#ff0000"
             android:textSize="30sp" />
     </LinearLayout>
 

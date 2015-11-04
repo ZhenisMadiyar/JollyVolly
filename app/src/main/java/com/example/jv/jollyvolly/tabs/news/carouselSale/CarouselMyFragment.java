@@ -84,6 +84,7 @@ public class CarouselMyFragment extends Fragment {
                 intent.putExtra("likeCount", News.arrayListNewsSale.get(pos).getLikeCount());
                 intent.putExtra("liked", News.arrayListNewsSale.get(pos).getLiked());
                 startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
             }
         });
 

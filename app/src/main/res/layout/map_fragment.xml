@@ -5,27 +5,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="65dp"
         android:background="@drawable/tab_bar_bg">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="КАРТА"
-            android:textColor="@android:color/holo_red_dark"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
-            android:textSize="30sp"/>
-    </LinearLayout>
+        <ImageView
+            android:background="@drawable/logo_text"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:id="@+id/imageView"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/status_bg"
             android:layout_width="match_parent"
-            android:layout_height="15dp"
+            android:layout_height="20dp"
             android:background="@android:color/holo_green_dark">
 
             <TextView
@@ -34,7 +34,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center_horizontal|center_vertical"
-                android:text="Working"
                 android:textColor="#fff" />
         </LinearLayout>
 

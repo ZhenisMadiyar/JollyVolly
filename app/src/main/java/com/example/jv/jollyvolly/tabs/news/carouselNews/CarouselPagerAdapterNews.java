@@ -89,7 +89,7 @@ public class CarouselPagerAdapterNews extends FragmentPagerAdapter implements
                     }
                     News.dotsCorp[i].setTextColor(activity.getResources().getColor(android.R.color.darker_gray));
                 }
-                News.dotsCorp[position].setTextColor(activity.getResources().getColor(android.R.color.holo_blue_light));
+                News.dotsCorp[position].setTextColor(activity.getResources().getColor(android.R.color.black));
             }
         } else {
             for (int i = 0; i < News.dotsCountCorp; i++) {
@@ -98,7 +98,7 @@ public class CarouselPagerAdapterNews extends FragmentPagerAdapter implements
                 }
                 News.dotsCorp[i].setTextColor(activity.getResources().getColor(android.R.color.darker_gray));
             }
-            News.dotsCorp[position].setTextColor(activity.getResources().getColor(android.R.color.holo_blue_light));
+            News.dotsCorp[position].setTextColor(activity.getResources().getColor(android.R.color.black));
         }
 //        if (position >= dotsCountVideo) {
 //            if (dotsCountVideo == 0) {

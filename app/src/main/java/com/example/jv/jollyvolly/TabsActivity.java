@@ -55,15 +55,15 @@ public class TabsActivity extends FragmentActivity {
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setOffscreenPageLimit(4);
-        View tabView1 = getLayoutInflater().inflate(R.layout.map, mTabHost, false);
-        View tabView2 = getLayoutInflater().inflate(R.layout.news, mTabHost, false);
-        View tabView3 = getLayoutInflater().inflate(R.layout.menu_list, mTabHost, false);
+        View tabView1 = getLayoutInflater().inflate(R.layout.news, mTabHost, false);
+        View tabView2 = getLayoutInflater().inflate(R.layout.menu_list, mTabHost, false);
+        View tabView3 = getLayoutInflater().inflate(R.layout.map, mTabHost, false);
         View tabView4 = getLayoutInflater().inflate(R.layout.send_sms, mTabHost, false);
 
         final HashMap<Integer, Class> hm = new HashMap<>();
-        hm.put(0, Map.class);
-        hm.put(1, News.class);
-        hm.put(2, MenuList.class);
+        hm.put(0, News.class);
+        hm.put(1, MenuList.class);
+        hm.put(2, Map.class);
         hm.put(3, SendMail.class);
 
         HashMap<Integer, View> hashMapView = new HashMap<>();
@@ -73,9 +73,9 @@ public class TabsActivity extends FragmentActivity {
         hashMapView.put(3, tabView4);
 
         HashMap<Integer,String> hashMapView2=new HashMap<Integer, String>();
-        hashMapView2.put(0, "Map");
-        hashMapView2.put(1, "News");
-        hashMapView2.put(2, "MenuList");
+        hashMapView2.put(0, "News");
+        hashMapView2.put(1, "MenuList");
+        hashMapView2.put(2, "Map");
         hashMapView2.put(3, "SendMail");
 
         Class[] tabNamePosition = new Class[4];
@@ -164,6 +164,7 @@ public class TabsActivity extends FragmentActivity {
             mViewPager = pager;
             mTabHost.setOnTabChangedListener(this);
             mViewPager.setAdapter(this);
+//            mViewPager.setCurrentItem(1);
             mViewPager.setOnPageChangeListener(this);
         }
         public void addTab(final TabHost.TabSpec tabSpec, final Class<?> clss, final Bundle args) {

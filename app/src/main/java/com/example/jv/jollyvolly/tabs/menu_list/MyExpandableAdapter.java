@@ -88,10 +88,10 @@ public class MyExpandableAdapter extends BaseExpandableListAdapter {
                         .into(bucket_2);
 //                }
 
-                textSize1 = (TextView) convertView.findViewById(R.id.textViewSize1);
-                textSize2 = (TextView) convertView.findViewById(R.id.textViewSize2);
-                textSize1.setText(size[0]);
-                textSize2.setText(size[1]);
+//                textSize1 = (TextView) convertView.findViewById(R.id.textViewSize1);
+//                textSize2 = (TextView) convertView.findViewById(R.id.textViewSize2);
+//                textSize1.setText(size[0]);
+//                textSize2.setText(size[1]);
             } else {
                 convertView = inflater.inflate(R.layout.menu_child_view_2, null);
                 // get the textView reference and set the value
@@ -116,12 +116,12 @@ public class MyExpandableAdapter extends BaseExpandableListAdapter {
                             .into(imageViews[i]);
                 }
 
-                textSize1 = (TextView) convertView.findViewById(R.id.textViewSize1);
-                textSize2 = (TextView) convertView.findViewById(R.id.textViewSize2);
-                textSize3 = (TextView) convertView.findViewById(R.id.textViewSize3);
-                textSize1.setText(size[0]);
-                textSize2.setText(size[1]);
-                textSize3.setText(size[2]);
+//                textSize1 = (TextView) convertView.findViewById(R.id.textViewSize1);
+//                textSize2 = (TextView) convertView.findViewById(R.id.textViewSize2);
+//                textSize3 = (TextView) convertView.findViewById(R.id.textViewSize3);
+//                textSize1.setText(size[0]);
+//                textSize2.setText(size[1]);
+//                textSize3.setText(size[2]);
             } else {
                 convertView = inflater.inflate(R.layout.menu_child_view_3, null);
                 // get the textView reference and set the value
@@ -150,14 +150,14 @@ public class MyExpandableAdapter extends BaseExpandableListAdapter {
                             .into(imageViews[i]);
                 }
 
-                textSize1 = (TextView) convertView.findViewById(R.id.textViewSize1);
-                textSize2 = (TextView) convertView.findViewById(R.id.textViewSize2);
-                textSize3 = (TextView) convertView.findViewById(R.id.textViewSize3);
-                textSize4 = (TextView) convertView.findViewById(R.id.textViewSize4);
-                textSize1.setText(size[0]);
-                textSize2.setText(size[1]);
-                textSize3.setText(size[2]);
-                textSize4.setText(size[3]);
+//                textSize1 = (TextView) convertView.findViewById(R.id.textViewSize1);
+//                textSize2 = (TextView) convertView.findViewById(R.id.textViewSize2);
+//                textSize3 = (TextView) convertView.findViewById(R.id.textViewSize3);
+//                textSize4 = (TextView) convertView.findViewById(R.id.textViewSize4);
+//                textSize1.setText(size[0]);
+//                textSize2.setText(size[1]);
+//                textSize3.setText(size[2]);
+//                textSize4.setText(size[3]);
             } else {
                 convertView = inflater.inflate(R.layout.menu_child_view_4, null);
                 // get the textView reference and set the value

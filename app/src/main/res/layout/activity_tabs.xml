@@ -32,7 +32,7 @@
                     android:layout_weight="1" />
 
                 <TabWidget
-                    android:background="@drawable/tab_bar_bg"
+                    android:background="#fff"
                     android:id="@android:id/tabs"
                     android:layout_width="match_parent"
                     android:layout_height="65dp"

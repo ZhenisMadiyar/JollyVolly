@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.jv.jollyvolly.R;
 import com.google.gson.Gson;
@@ -39,20 +40,26 @@ public class SendMail extends Fragment {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                parameter.put("email", editTextEmail.getText().toString());
-                parameter.put("subject_name", editTextName.getText().toString());
-                parameter.put("subject_text", editTextSubjectText.getText().toString());
-                ParseCloud.callFunctionInBackground("send_email", parameter, new FunctionCallback<Object>() {
-                    @Override
-                    public void done(Object o, ParseException e) {
-                        if (e == null) {
-                            String response = gson.toJson(o);
-                            Log.i("response_email", response);
-                        } else {
-                            Log.e("error_email", e.getMessage());
+                if (editTextEmail.getText().toString().equals("")) {
+                    Toast.makeText(getActivity(), "Пожалуйста введите Email", Toast.LENGTH_SHORT).show();
+                } else {
+                    parameter.put("email", editTextEmail.getText().toString());
+                    parameter.put("subject_name", editTextName.getText().toString());
+                    parameter.put("subject_text", editTextSubjectText.getText().toString()+"\n"+editTextPhone.getText().toString());
+                    ParseCloud.callFunctionInBackground("send_email", parameter, new FunctionCallback<Object>() {
+                        @Override
+                        public void done(Object o, ParseException e) {
+                            if (e == null) {
+                                String response = gson.toJson(o);
+                                Log.i("response_email", response);
+                                Toast.makeText(getActivity(), "Ваше сообщение отправлено", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActivity(), "Пожалуйста введите правильный Email", Toast.LENGTH_SHORT).show();
+                                Log.e("error_email", e.getMessage());
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         });
 

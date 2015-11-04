@@ -3,5 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="podrobnee"> <u>Подробнее</u>.</string>
+    <string name="podrobnee"><u>Подробнее</u></string>
+    <string name="open_settings">Open GPS setting</string>
+    <string name="cancel">Cancel</string>
 </resources>

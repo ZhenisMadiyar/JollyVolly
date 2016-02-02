@@ -176,8 +176,12 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
 
                     // Getting Current Location
                     location = locationManager.getLastKnownLocation(provider);
-                    Log.i("MyLocation", location.getLatitude()+"");
-                    drawMarker(location);
+//                    Log.i("MyLocation", location.getLatitude()+"");
+                    if (location == null) {
+                        Toast.makeText(getActivity(), "Включите GPS", Toast.LENGTH_SHORT).show();
+                    } else {
+                        drawMarker(location);
+                    }
 //                if (location.getLatitude() == 0) {
 //                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                     //====
@@ -341,6 +345,7 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
 //                                    double lng = Double.parseDouble(latLang[1]);
 //                                    LatLng latLng = new LatLng(lat, lng);
                                                     String latLang[] = lat_lang.split(",");
+                                                    Log.i("LATLNG", lat_lang);
                                                     double lat = Double.parseDouble(latLang[0]);
                                                     double lng = Double.parseDouble(latLang[1]);
 //                                                    mobiliuzCars.add(new Car(objectId, status, lat_lang, time, address, id_car));

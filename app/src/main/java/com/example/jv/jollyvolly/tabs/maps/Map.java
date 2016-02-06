@@ -92,8 +92,12 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
     LatLng currentPosition;
     boolean gps_enabled = false;
     boolean network_enabled = false;
+    boolean isGPSEnabled;
+    boolean isNetworkEnabled;
     LocationManager locationManager;
     LocationListener locationListener;
+    private boolean canGetLocation;
+
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         if (view != null) {
@@ -143,9 +147,10 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
                 try {
                     gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
                     network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-                } catch(Exception ex) {}
+                } catch (Exception ex) {
+                }
 
-                if(!gps_enabled && !network_enabled) {
+                if (!gps_enabled && !network_enabled) {
                     // notify user
                     AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
                     dialog.setMessage("GPS not available");
@@ -153,7 +158,7 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
                         @Override
                         public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                             // TODO Auto-generated method stub
-                            Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                             getActivity().startActivity(myIntent);
                             //get gps
                         }
@@ -176,12 +181,13 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
 
                     // Getting Current Location
                     location = locationManager.getLastKnownLocation(provider);
+//                    location = getLocation();
 //                    Log.i("MyLocation", location.getLatitude()+"");
-                    if (location == null) {
-                        Toast.makeText(getActivity(), "Включите GPS", Toast.LENGTH_SHORT).show();
-                    } else {
+//                    if (location == null) {
+//                        Toast.makeText(getActivity(), "Включите GPS", Toast.LENGTH_SHORT).show();
+//                    } else {
                         drawMarker(location);
-                    }
+//                    }
 //                if (location.getLatitude() == 0) {
 //                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                     //====
@@ -301,7 +307,14 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
     private void drawMarker(Location location) {
         // Remove any existing markers on the map
 
-        currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
+        if (location == null) {
+//            Toast.makeText(getActivity(), "Включите GPS drawMarker", Toast.LENGTH_SHORT).show();
+            currentPosition = new LatLng(43.256414, 76.924143);
+        } else {
+//            43.256414,
+            currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
+        }
+        Toast.makeText(getActivity(), "drawMarker", Toast.LENGTH_SHORT).show();
         Timer timer = new Timer();
         final HashMap<String, Object> mapBanner = new HashMap<String, Object>();
         TimerTask doAsynchronousTask = new TimerTask() {
@@ -321,7 +334,7 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
                                     } else {
                                         String json = gson.toJson(response);
                                         if (json.equals("[]")) {
-                                            Toast.makeText(getActivity(), "car NULL", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getActivity(), "Ошибка с сервером, попробуйте позже", Toast.LENGTH_LONG).show();
                                             pager.setVisibility(View.GONE);
                                         } else {
                                             pager.setVisibility(View.VISIBLE);
@@ -331,10 +344,12 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
                                                 for (int i = 0; i < jsonArray.length(); i++) {
                                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                                     JSONObject estimatedData = jsonObject.getJSONObject("estimatedData");
+                                                    Log.i("ESTIMATED", estimatedData.toString());
 //                                    JSONObject jsonImage = estimatedData.getJSONObject("image");
 
 //                                    String carId = estimatedData.getString("id");
                                                     String objectId = jsonObject.getString("objectId");
+                                                    Log.i("OBJECT_ID", objectId);
                                                     String status = estimatedData.getString("status");
                                                     String time = estimatedData.getString("time");
                                                     String lat_lang = estimatedData.getString("lat_lang");
@@ -657,6 +672,7 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
                                                 }
                                             } catch (JSONException e1) {
                                                 e1.printStackTrace();
+                                                Log.e("ERROR_ERROR", e1.toString());
                                             }
 //                        Toast.makeText(getApplicationContext(), "banner not NULL", Toast.LENGTH_LONG).show();
                                         }
@@ -902,8 +918,6 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
             }
         };
         timer.schedule(doAsynchronousTask, 0, 60000);
-
-
     }
 
     public int CalculationByDistance(LatLng StartP, LatLng EndP, int pos) {
@@ -1091,6 +1105,86 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
         }
 
     }
+
+//    public Location getLocation() {
+//        try {
+//            locationManager = (LocationManager) getActivity()
+//                    .getSystemService(Context.LOCATION_SERVICE);
+//
+//            // getting GPS status
+//            isGPSEnabled = locationManager
+//                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
+//
+//            // getting network status
+//            isNetworkEnabled = locationManager
+//                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+//
+//            if (!isGPSEnabled && !isNetworkEnabled) {
+//                // no network provider is enabled
+//                // notify user
+//                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+//                dialog.setMessage("GPS not available");
+//                dialog.setPositiveButton(getActivity().getResources().getString(R.string.open_settings), new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+//                        // TODO Auto-generated method stub
+//                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                        getActivity().startActivity(myIntent);
+//                        //get gps
+//                    }
+//                });
+//                dialog.setNegativeButton(getActivity().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+//                        // TODO Auto-generated method stub
+//
+//                    }
+//                });
+//                dialog.show();
+//            } else {
+//                this.canGetLocation = true;
+//                if (isNetworkEnabled) {
+//                    locationManager.requestLocationUpdates(
+//                            LocationManager.NETWORK_PROVIDER,
+//                            1,
+//                            2, this);
+//                    Log.d("Network", "Network Enabled");
+//                    if (locationManager != null) {
+//                        location = locationManager
+//                                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//                        if (location != null) {
+////                            latitude = location.getLatitude();
+////                            longitude = location.getLongitude();
+//                        }
+//                    }
+//                }
+//                // if GPS Enabled get lat/long using GPS Services
+//                if (isGPSEnabled) {
+//                    if (location == null) {
+//                        locationManager.requestLocationUpdates(
+//                                LocationManager.GPS_PROVIDER,
+//                                0,
+//                                2, this);
+//                        Log.d("GPS", "GPS Enabled");
+//                        if (locationManager != null) {
+//                            location = locationManager
+//                                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//                            if (location != null) {
+////                                latitude = location.getLatitude();
+////                                longitude = location.getLongitude();
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return location;
+//    }
 
     @Override
     public void onPageScrollStateChanged(int state) {

@@ -97,6 +97,7 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
     LocationManager locationManager;
     LocationListener locationListener;
     private boolean canGetLocation;
+    LinearLayout pagerLayout;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
@@ -114,6 +115,7 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
 //            map.getMyLocation();
 //            addMarkersToMap();
 
+            pagerLayout = (LinearLayout) view.findViewById(R.id.pager_layout);
             pager = (ViewPager) view.findViewById(R.id.myviewpager);
             statusCar = (TextView) view.findViewById(R.id.status_car);
             statusBg = (LinearLayout) view.findViewById(R.id.status_bg);
@@ -152,6 +154,7 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
 
                 if (!gps_enabled && !network_enabled) {
                     // notify user
+                    pagerLayout.setVisibility(View.GONE);
                     AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
                     dialog.setMessage("GPS not available");
                     dialog.setPositiveButton(getActivity().getResources().getString(R.string.open_settings), new DialogInterface.OnClickListener() {
@@ -314,6 +317,7 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
 //            43.256414,
             currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
         }
+        pagerLayout.setVisibility(View.VISIBLE);
         Toast.makeText(getActivity(), "drawMarker", Toast.LENGTH_SHORT).show();
         Timer timer = new Timer();
         final HashMap<String, Object> mapBanner = new HashMap<String, Object>();

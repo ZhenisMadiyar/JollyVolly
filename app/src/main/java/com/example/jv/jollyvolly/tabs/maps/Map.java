@@ -140,7 +140,6 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
                 Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, getActivity(), requestCode);
                 dialog.show();
             } else {
-
                 map = ((MapFragment) fragManager.findFragmentById(R.id.map)).getMap();
                 map.setMyLocationEnabled(true);
                 // Getting LocationManager object from System Service LOCATION_SERVICE
@@ -175,6 +174,8 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
                         }
                     });
                     dialog.show();
+
+                    drawMarkerWithoutGps();
                 } else {
                     // Creating a criteria object to retrieve provider
                     Criteria criteria = new Criteria();
@@ -189,7 +190,7 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
 //                    if (location == null) {
 //                        Toast.makeText(getActivity(), "Включите GPS", Toast.LENGTH_SHORT).show();
 //                    } else {
-                        drawMarker(location);
+                    drawMarker(location);
 //                    }
 //                if (location.getLatitude() == 0) {
 //                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -317,6 +318,617 @@ public class Map extends Fragment implements LocationListener, ViewPager.OnPageC
 //            43.256414,
             currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
         }
+        pagerLayout.setVisibility(View.VISIBLE);
+        Toast.makeText(getActivity(), "drawMarker", Toast.LENGTH_SHORT).show();
+        Timer timer = new Timer();
+        final HashMap<String, Object> mapBanner = new HashMap<String, Object>();
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @SuppressWarnings("unchecked")
+                    public void run() {
+                        try {
+                            Marker[] markers;
+                            map.clear();
+                            mobiliuzCars.clear();
+                            ParseCloud.callFunctionInBackground("cars", mapBanner, new FunctionCallback<Object>() {
+                                public void done(Object response, ParseException e) {
+                                    if (e != null) {
+
+                                    } else {
+                                        String json = gson.toJson(response);
+                                        if (json.equals("[]")) {
+                                            Toast.makeText(getActivity(), "Ошибка с сервером, попробуйте позже", Toast.LENGTH_LONG).show();
+                                            pager.setVisibility(View.GONE);
+                                        } else {
+                                            pager.setVisibility(View.VISIBLE);
+                                            Log.i("JSON_BANNER", json);
+                                            try {
+                                                JSONArray jsonArray = new JSONArray(json);
+                                                for (int i = 0; i < jsonArray.length(); i++) {
+                                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                                    JSONObject estimatedData = jsonObject.getJSONObject("estimatedData");
+                                                    Log.i("ESTIMATED", estimatedData.toString());
+//                                    JSONObject jsonImage = estimatedData.getJSONObject("image");
+
+//                                    String carId = estimatedData.getString("id");
+                                                    String objectId = jsonObject.getString("objectId");
+                                                    Log.i("OBJECT_ID", objectId);
+                                                    String status = estimatedData.getString("status");
+                                                    String time = estimatedData.getString("time");
+                                                    String lat_lang = estimatedData.getString("lat_lang");
+                                                    String address = estimatedData.getString("address");
+                                                    int id_car = estimatedData.getInt("id_car");
+//                                    String latLang[] = lat_lang.split(",");
+//                                    double lat = Double.parseDouble(latLang[0]);
+//                                    double lng = Double.parseDouble(latLang[1]);
+//                                    LatLng latLng = new LatLng(lat, lng);
+                                                    String latLang[] = lat_lang.split(",");
+                                                    Log.i("LATLNG", lat_lang);
+                                                    double lat = Double.parseDouble(latLang[0]);
+                                                    double lng = Double.parseDouble(latLang[1]);
+//                                                    mobiliuzCars.add(new Car(objectId, status, lat_lang, time, address, id_car));
+                                                    mobiliuzCars.add(new MobiliuzCar(id_car, address, time,
+                                                            status, "", lat, lng));
+                                                }
+                                                adapter = new MyPagerAdapter(Map.this, getFragmentManager(), mobiliuzCars);
+                                                pager.setAdapter(adapter);
+//                                                adapter.notifyDataSetChanged();
+                                                // Set current item to the middle page so we can fling to both
+                                                // directions left and right
+                                                pager.setCurrentItem(FIRST_PAGE);
+                                                // Necessary or the pager will only have one extra page to show
+                                                // make this at least however many pages you can see
+                                                pager.setOffscreenPageLimit(3);
+
+                                                //------------------------------------
+//                                                pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//                                                    @Override
+//                                                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//
+//                                                    }
+//
+//                                                    @Override
+//                                                    public void onPageSelected(int position) {
+//                                                        if (position >= TabsActivity.arrayList.size()) {
+//                                                            position = position % TabsActivity.arrayList.size();
+//                                                            Log.i("MOD_POSITION", position + "");
+//                                                            statusCar.setText(mobiliuzCars.get(position).getStatus());
+//
+////                    String latLang[] = TabsActivity.arrayList.get(position).getLatLang().split(",");
+////                    double lat = Double.parseDouble(latLang[0]);
+////                    double lng = Double.parseDouble(latLang[1]);
+//                                                            LatLng latLng = new LatLng(mobiliuzCars.get(position).getLat(), mobiliuzCars.get(position).getLng());
+////                    Marker davao = map.addMarker(new MarkerOptions().position(latLng).title("Almaty").
+////                            snippet(TabsActivity.arrayList.get(position).getAddress()));
+//
+//                                                            // zoom in the camera to Davao city
+////                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+//                                                            // animate the zoom process
+////                    map.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+//
+////                    CameraUpdate center =
+////                            CameraUpdateFactory.newLatLng(latLng);
+////                    CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+////                    map.moveCamera(center);
+////                    map.animateCamera(zoom, 2000, null);
+//                                                            CameraPosition cameraPosition = new CameraPosition.Builder()
+//                                                                    .target(latLng)
+//                                                                    .zoom(15)
+//                                                                    .bearing(45)
+//                                                                    .tilt(20)
+//                                                                    .build();
+//                                                            CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+//                                                            map.animateCamera(cameraUpdate);
+//                                                        } else {
+//                                                            statusCar.setText(mobiliuzCars.get(position).getStatus());
+//
+////                    String latLang[] = TabsActivity.arrayList.get(position).getLatLang().split(",");
+////                    double lat = Double.parseDouble(latLang[0]);
+////                    double lng = Double.parseDouble(latLang[1]);
+//                                                            LatLng latLng = new LatLng(mobiliuzCars.get(position).getLat(), mobiliuzCars.get(position).getLng());
+//
+////                    Marker davao = map.addMarker(new MarkerOptions().position(latLng).title("Almaty").
+////                            snippet(TabsActivity.arrayList.get(position).getAddress()));
+//
+//                                                            // zoom in the camera to Davao city
+////                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+////
+////                    // animate the zoom process
+////                    map.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+//
+//                                                            CameraUpdate center =
+//                                                                    CameraUpdateFactory.newLatLng(latLng);
+//                                                            CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+//                                                            map.moveCamera(center);
+//                                                            map.animateCamera(zoom, 2000, null);
+//
+//                                                        }
+//                                                    }
+//
+//                                                    @Override
+//                                                    public void onPageScrollStateChanged(int state) {
+//
+//                                                    }
+//                                                });
+                                                //------------------------------------
+
+                                                if (count == 0) {
+                                                    count++;
+//                                                    marker_me = map.addMarker(new MarkerOptions()
+//                                                            .position(currentPosition)
+//                                                            .snippet("")
+//                                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mylocation))
+//                                                            .title("ME"));
+//                                                    marker_me = map.addMarker(new MarkerOptions()
+//                                                            .position(currentPosition)
+//                                                            .snippet("Lat:" + location.getLatitude() + "Lng:" + location.getLongitude())
+////                                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+//                                                            .title("ME"));
+//                                                                        map.addMarker(markerPositionsMe);
+
+//            Marker davao = map.addMarker(new MarkerOptions().position(DAVAO).title("Davao City").
+//                    snippet("Ateneo de Davao University"));
+                                                    for (int i = 0; i < mobiliuzCars.size(); i++) {
+//            String latLang[] = TabsActivity.arrayList.get(i).getLatLang().split(",");
+//            double lat = Double.parseDouble(latLang[0]);
+//            double lng = Double.parseDouble(latLang[1]);
+                                                        LatLng ll = new LatLng(mobiliuzCars.get(i).getLat(), mobiliuzCars.get(i).getLng());
+                                                        BitmapDescriptor bitmapMarker;
+                                                        if (mobiliuzCars.get(i).getStatus().equals("В пути")) {
+                                                            bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.car_moving);
+                                                        } else {
+                                                            bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.map_car);
+                                                        }
+                                                        marker_cars = map.addMarker(new MarkerOptions().position(ll).title(mobiliuzCars.get(i).getAddress())
+                                                                .snippet("").icon(bitmapMarker));
+//            switch (Cars.get(i).getState()) {
+//                case 0:
+//                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+//                    Log.i(TAG, "RED");
+//                    break;
+//                case 1:
+//                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+//                    Log.i(TAG, "GREEN");
+//                    break;
+//                case 2:
+//                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+//                    Log.i(TAG, "ORANGE");
+//                    break;
+//                default:
+//                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+//                    Log.i(TAG, "DEFAULT");
+//                    break;
+//            }
+//                                                        marker_cars = map.addMarker(new MarkerOptions().position(ll).title(mobiliuzCars.get(i).getAddress())
+//                                                                .snippet(mobiliuzCars.get(i).getAddress()).icon(bitmapMarker));
+//                                                        markers[i] = marker_cars;
+                                                        nearPos = CalculationByDistance(currentPosition, ll, i);
+
+
+                                                    }
+
+                                                    final View mapView = myContext.getFragmentManager().findFragmentById(R.id.map).getView();
+                                                    if (mapView.getViewTreeObserver().isAlive()) {
+                                                        mapView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                                            @SuppressLint("NewApi")
+                                                            @Override
+                                                            public void onGlobalLayout() {
+                                                                LatLngBounds.Builder bld = new LatLngBounds.Builder();
+                                                                for (int i = 0; i <= 2; i++) {
+                                                                    if (i == 0) {
+                                                                        Log.i("NearPos", nearPos + "");
+//                            String latLang[] = TabsActivity.arrayList.get(nearPos).getLatLang().split(",");
+//                            double lat = Double.parseDouble(latLang[0]);
+//                            double lng = Double.parseDouble(latLang[1]);
+//                                double minIndex = radiusRange.indexOf(Collections.min(radiusRange));
+//                                Log.i("RadiusSize", radiusRange.size() + "");
+//                                for (int j = 0; j < radiusRange.size(); j++) {
+//                                    if (radiusRange.get(j) == minIndex) {
+//                                        Log.i("HERE", TabsActivity.arrayList.get(j).getAddress());
+//                                    }
+//                                }
+//                                Log.i("MinIndex", minIndex+"");
+                                                                        LatLng ll = new LatLng(mobiliuzCars.get(i).getLat(), mobiliuzCars.get(i).getLng());
+                                                                        bld.include(ll);
+                                                                    }
+                                                                    if (i == 1) {
+                                                                        bld.include(currentPosition);
+                                                                    }
+                                                                }
+//                        pager.setCurrentItem(nearPos);
+                                                                LatLngBounds bounds = bld.build();
+                                                                map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+                                                                mapView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
+                                                            }
+                                                        });
+                                                    }
+                                                } else {
+                                                    count++;
+//                                                    marker_me = map.addMarker(new MarkerOptions()
+//                                                            .position(currentPosition)
+//                                                            .snippet("")
+//                                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mylocation))
+//                                                            .title("ME"));
+//                                                                        map.addMarker(markerPositionsMe);
+
+//            Marker davao = map.addMarker(new MarkerOptions().position(DAVAO).title("Davao City").
+//                    snippet("Ateneo de Davao University"));
+                                                    for (int i = 0; i < mobiliuzCars.size(); i++) {
+//            String latLang[] = TabsActivity.arrayList.get(i).getLatLang().split(",");
+//            double lat = Double.parseDouble(latLang[0]);
+//            double lng = Double.parseDouble(latLang[1]);
+                                                        LatLng ll = new LatLng(mobiliuzCars.get(i).getLat(), mobiliuzCars.get(i).getLng());
+                                                        BitmapDescriptor bitmapMarker;
+                                                        if (mobiliuzCars.get(i).getStatus().equals("В пути")) {
+                                                            bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.car_moving);
+                                                        } else {
+                                                            bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.map_car);
+                                                        }
+
+//            switch (Cars.get(i).getState()) {
+//                case 0:
+//                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+//                    Log.i(TAG, "RED");
+//                    break;
+//                case 1:
+//                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+//                    Log.i(TAG, "GREEN");
+//                    break;
+//                case 2:
+//                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+//                    Log.i(TAG, "ORANGE");
+//                    break;
+//                default:
+//                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+//                    Log.i(TAG, "DEFAULT");
+//                    break;
+//            }
+                                                        marker_cars = map.addMarker(new MarkerOptions().position(ll).title(mobiliuzCars.get(i).getAddress())
+                                                                .snippet("").icon(bitmapMarker));
+//                                                        markers[i] = marker_cars;
+//                                                        nearPos = CalculationByDistance(currentPosition, ll, i);
+
+
+                                                    }
+
+//                                                    final View mapView = myContext.getFragmentManager().findFragmentById(R.id.map).getView();
+//                                                    if (mapView.getViewTreeObserver().isAlive()) {
+//                                                        mapView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                                                            @SuppressLint("NewApi")
+//                                                            @Override
+//                                                            public void onGlobalLayout() {
+//                                                                LatLngBounds.Builder bld = new LatLngBounds.Builder();
+//                                                                for (int i = 0; i <= 2; i++) {
+//                                                                    if (i == 0) {
+//                                                                        Log.i("NearPos", nearPos + "");
+////                            String latLang[] = TabsActivity.arrayList.get(nearPos).getLatLang().split(",");
+////                            double lat = Double.parseDouble(latLang[0]);
+////                            double lng = Double.parseDouble(latLang[1]);
+////                                double minIndex = radiusRange.indexOf(Collections.min(radiusRange));
+////                                Log.i("RadiusSize", radiusRange.size() + "");
+////                                for (int j = 0; j < radiusRange.size(); j++) {
+////                                    if (radiusRange.get(j) == minIndex) {
+////                                        Log.i("HERE", TabsActivity.arrayList.get(j).getAddress());
+////                                    }
+////                                }
+////                                Log.i("MinIndex", minIndex+"");
+//                                                                        LatLng ll = new LatLng(mobiliuzCars.get(i).getLat(), mobiliuzCars.get(i).getLng());
+//                                                                        bld.include(ll);
+//                                                                    }
+//                                                                    if (i == 1) {
+//                                                                        bld.include(currentPosition);
+//                                                                    }
+//                                                                }
+////                        pager.setCurrentItem(nearPos);
+//                                                                LatLngBounds bounds = bld.build();
+//                                                                map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+//                                                                mapView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+//
+//                                                            }
+//                                                        });
+//                                                    }
+//                                                    Log.i("Marker_Size", markers.length + "");
+//                                                    if (map != null) {
+//                                                        BitmapDescriptor bitmapMarker = null;
+//                                                        for (int k = 0; k < markers.length; k++) {
+//                                                            if (mobiliuzCars.get(k).getStatus().equals("В пути")) {
+//                                                                bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.car_moving);
+//                                                            } else {
+//                                                                bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.map_car);
+//                                                            }
+//                                                            LatLng ll = new LatLng(mobiliuzCars.get(k).getLat(), mobiliuzCars.get(k).getLng());
+//                                                            markers[k].setPosition(ll);
+//                                                            markers[k].setTitle(mobiliuzCars.get(k).getAddress());
+//                                                            markers[k].setSnippet(mobiliuzCars.get(k).getAddress());
+//                                                            if (bitmapMarker != null) {
+//                                                                markers[k].setIcon(bitmapMarker);
+//                                                            } else {
+//                                                                bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.car_moving);
+//                                                                markers[k].setIcon(bitmapMarker);
+//                                                            }
+//                                                        }
+//                                                        marker_me.setPosition(currentPosition);
+//                                                        count++;
+//                                                    } else {
+//                                                        for (int i = 0; i < mobiliuzCars.size(); i++) {
+////            String latLang[] = TabsActivity.arrayList.get(i).getLatLang().split(",");
+////            double lat = Double.parseDouble(latLang[0]);
+////            double lng = Double.parseDouble(latLang[1]);
+//                                                            LatLng ll = new LatLng(mobiliuzCars.get(i).getLat(), mobiliuzCars.get(i).getLng());
+//                                                            BitmapDescriptor bitmapMarker;
+//                                                            if (mobiliuzCars.get(i).getStatus().equals("В пути")) {
+//                                                                bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.car_moving);
+//                                                            } else {
+//                                                                bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.map_car);
+//                                                            }
+//                                                            marker_cars = map.addMarker(new MarkerOptions().position(ll).title(mobiliuzCars.get(i).getAddress())
+//                                                                    .snippet(mobiliuzCars.get(i).getAddress()).icon(bitmapMarker));
+////                                                            markers[i] = marker_cars;
+//                                                            nearPos = CalculationByDistance(currentPosition, ll, i);
+//
+//
+//                                                        }
+//                                                        marker_me.setPosition(currentPosition);
+//                                                        count++;
+//                                                    }
+                                                }
+                                            } catch (JSONException e1) {
+                                                e1.printStackTrace();
+                                                Log.e("ERROR_ERROR", e1.toString());
+                                            }
+//                        Toast.makeText(getApplicationContext(), "banner not NULL", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                }
+                            });
+
+
+                            //*!*!***!*!*!*!*!*!*!*!*!*!*!**!*!*!
+//                            Log.i("Refreshed", "Refreshed");
+//                            mobiliuzCars.clear();
+//                            HashMap<String, Object> parameter = new HashMap<String, Object>();
+//                            final HashMap<String, Object> parameter1 = new HashMap<String, Object>();
+//                            //get cars from mobiliuz
+//                            ParseCloud.callFunctionInBackground("access_token", parameter, new FunctionCallback<Object>() {
+//                                @Override
+//                                public void done(Object o, ParseException e) {
+//                                    if (e == null) {
+//                                        String response = gson.toJson(o);
+//                                        Log.i("access_token", response);
+//                                        if (response != null) {
+//                                            try {
+//                                                JSONObject jsonObject = new JSONObject(response);
+//                                                if (jsonObject.getBoolean("success")) {
+//                                                    api_token = jsonObject.getString("api_token");
+//
+//                                                    parameter1.put("object_id", api_token);
+//                                                    ParseCloud.callFunctionInBackground("get_cars_list", parameter1, new FunctionCallback<Object>() {
+//                                                        @Override
+//                                                        public void done(Object o, ParseException e) {
+//                                                            if (e == null) {
+//                                                                String response = gson.toJson(o);
+//                                                                Log.i("access_token_car", response);
+//                                                                if (response != null) {
+//                                                                    try {
+//                                                                        JSONObject jsonObject = new JSONObject(response);
+//                                                                        JSONArray cars = jsonObject.getJSONArray("objects");
+//                                                                        Log.i("Cars_Size", cars.length() + "");
+//                                                                        for (int i = 0; i < cars.length(); i++) {
+//                                                                            JSONObject objects = cars.getJSONObject(i);
+//                                                                            String name = objects.getString("model");
+//                                                                            int id = objects.getInt("id");
+//
+//                                                                            JSONArray last_pos = objects.getJSONArray("last_position");
+//                                                                            double lat = (double) last_pos.get(0);
+//                                                                            double lot = (double) last_pos.get(1);
+//                                                                            Log.i("NAME", name + "");
+//                                                                            Log.i("LAT_LNG", lat + "," + lot + "");
+////                                                        mobiliuzCars.add(new MobiliuzCar(id, lat, lot));
+//                                                                            for (int j = 0; j < TabsActivity.arrayList.size(); j++) {
+//                                                                                if (id == TabsActivity.arrayList.get(j).id_car) {
+//                                                                                    Log.i("HELLO", "WORLD");
+//                                                                                    mobiliuzCars.add(new MobiliuzCar(id, TabsActivity.arrayList.get(j).getAddress(), TabsActivity.arrayList.get(j).getTime(),
+//                                                                                            TabsActivity.arrayList.get(j).getStatus(), TabsActivity.arrayList.get(j).getImageUrl(), lat, lot));
+//                                                                                }
+//                                                                            }
+//                                                                        }
+//                                                                        adapter = new MyPagerAdapter(Map.this, getFragmentManager(), mobiliuzCars);
+//                                                                        pager.setAdapter(adapter);
+//                                                                        // Set current item to the middle page so we can fling to both
+//                                                                        // directions left and right
+//                                                                        pager.setCurrentItem(FIRST_PAGE);
+//                                                                        // Necessary or the pager will only have one extra page to show
+//                                                                        // make this at least however many pages you can see
+//                                                                        pager.setOffscreenPageLimit(3);
+//                                                                        final LatLng currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
+//                                                                        if (count == 0) {
+//                                                                            marker_me = map.addMarker(new MarkerOptions()
+//                                                                                    .position(currentPosition)
+//                                                                                    .snippet("Lat:" + location.getLatitude() + "Lng:" + location.getLongitude())
+//                                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+//                                                                                    .title("ME"));
+////                                                                        map.addMarker(markerPositionsMe);
+//
+////            Marker davao = map.addMarker(new MarkerOptions().position(DAVAO).title("Davao City").
+////                    snippet("Ateneo de Davao University"));
+//                                                                            for (int i = 0; i < mobiliuzCars.size(); i++) {
+////            String latLang[] = TabsActivity.arrayList.get(i).getLatLang().split(",");
+////            double lat = Double.parseDouble(latLang[0]);
+////            double lng = Double.parseDouble(latLang[1]);
+//                                                                                LatLng ll = new LatLng(mobiliuzCars.get(i).getLat(), mobiliuzCars.get(i).getLng());
+//                                                                                BitmapDescriptor bitmapMarker;
+//                                                                                if (mobiliuzCars.get(i).getStatus().equals("В пути")) {
+//                                                                                    bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.car_moving);
+//                                                                                } else {
+//                                                                                    bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.map_car);
+//                                                                                }
+//
+////            switch (Cars.get(i).getState()) {
+////                case 0:
+////                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+////                    Log.i(TAG, "RED");
+////                    break;
+////                case 1:
+////                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+////                    Log.i(TAG, "GREEN");
+////                    break;
+////                case 2:
+////                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+////                    Log.i(TAG, "ORANGE");
+////                    break;
+////                default:
+////                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+////                    Log.i(TAG, "DEFAULT");
+////                    break;
+////            }
+//                                                                                marker_cars = map.addMarker(new MarkerOptions().position(ll).title(mobiliuzCars.get(i).getAddress())
+//                                                                                        .snippet(mobiliuzCars.get(i).getAddress()).icon(bitmapMarker));
+//                                                                                markers[i] = marker_cars;
+//                                                                                nearPos = CalculationByDistance(currentPosition, ll, i);
+//
+//
+//                                                                            }
+//
+//                                                                            final View mapView = myContext.getFragmentManager().findFragmentById(R.id.map).getView();
+//                                                                            if (mapView.getViewTreeObserver().isAlive()) {
+//                                                                                mapView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                                                                                    @SuppressLint("NewApi")
+//                                                                                    @Override
+//                                                                                    public void onGlobalLayout() {
+//                                                                                        LatLngBounds.Builder bld = new LatLngBounds.Builder();
+//                                                                                        for (int i = 0; i <= 2; i++) {
+//                                                                                            if (i == 0) {
+//                                                                                                Log.i("NearPos", nearPos + "");
+////                            String latLang[] = TabsActivity.arrayList.get(nearPos).getLatLang().split(",");
+////                            double lat = Double.parseDouble(latLang[0]);
+////                            double lng = Double.parseDouble(latLang[1]);
+////                                double minIndex = radiusRange.indexOf(Collections.min(radiusRange));
+////                                Log.i("RadiusSize", radiusRange.size() + "");
+////                                for (int j = 0; j < radiusRange.size(); j++) {
+////                                    if (radiusRange.get(j) == minIndex) {
+////                                        Log.i("HERE", TabsActivity.arrayList.get(j).getAddress());
+////                                    }
+////                                }
+////                                Log.i("MinIndex", minIndex+"");
+//                                                                                                LatLng ll = new LatLng(mobiliuzCars.get(i).getLat(), mobiliuzCars.get(i).getLng());
+//                                                                                                bld.include(ll);
+//                                                                                            }
+//                                                                                            if (i == 1) {
+//                                                                                                bld.include(currentPosition);
+//                                                                                            }
+//                                                                                        }
+////                        pager.setCurrentItem(nearPos);
+//                                                                                        LatLngBounds bounds = bld.build();
+//                                                                                        map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+//                                                                                        mapView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+//
+//                                                                                    }
+//                                                                                });
+//                                                                            }
+//                                                                            count++;
+//                                                                        } else {
+//                                                                            Log.i("Marker_Size", markers.length + "");
+//                                                                            if (map != null) {
+//                                                                                BitmapDescriptor bitmapMarker = null;
+//                                                                                for (int k = 0; k < markers.length; k++) {
+//                                                                                    if (mobiliuzCars.get(k).getStatus().equals("В пути")) {
+//                                                                                        bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.car_moving);
+//                                                                                    } else {
+//                                                                                        bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.map_car);
+//                                                                                    }
+//                                                                                    LatLng ll = new LatLng(mobiliuzCars.get(k).getLat(), mobiliuzCars.get(k).getLng());
+//                                                                                    markers[k].setPosition(ll);
+//                                                                                    markers[k].setTitle(mobiliuzCars.get(k).getAddress());
+//                                                                                    markers[k].setSnippet(mobiliuzCars.get(k).getAddress());
+//                                                                                    if (bitmapMarker != null) {
+//                                                                                        markers[k].setIcon(bitmapMarker);
+//                                                                                    } else {
+//                                                                                        bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.car_moving);
+//                                                                                        markers[k].setIcon(bitmapMarker);
+//                                                                                    }
+//                                                                                }
+//                                                                                marker_me.setPosition(currentPosition);
+//                                                                                count++;
+//                                                                            } else {
+//                                                                                for (int i = 0; i < mobiliuzCars.size(); i++) {
+////            String latLang[] = TabsActivity.arrayList.get(i).getLatLang().split(",");
+////            double lat = Double.parseDouble(latLang[0]);
+////            double lng = Double.parseDouble(latLang[1]);
+//                                                                                    LatLng ll = new LatLng(mobiliuzCars.get(i).getLat(), mobiliuzCars.get(i).getLng());
+//                                                                                    BitmapDescriptor bitmapMarker;
+//                                                                                    if (mobiliuzCars.get(i).getStatus().equals("В пути")) {
+//                                                                                        bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.car_moving);
+//                                                                                    } else {
+//                                                                                        bitmapMarker = BitmapDescriptorFactory.fromResource(R.drawable.map_car);
+//                                                                                    }
+//
+////            switch (Cars.get(i).getState()) {
+////                case 0:
+////                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+////                    Log.i(TAG, "RED");
+////                    break;
+////                case 1:
+////                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+////                    Log.i(TAG, "GREEN");
+////                    break;
+////                case 2:
+////                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+////                    Log.i(TAG, "ORANGE");
+////                    break;
+////                default:
+////                    bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+////                    Log.i(TAG, "DEFAULT");
+////                    break;
+////            }
+//                                                                                    marker_cars = map.addMarker(new MarkerOptions().position(ll).title(mobiliuzCars.get(i).getAddress())
+//                                                                                            .snippet(mobiliuzCars.get(i).getAddress()).icon(bitmapMarker));
+//                                                                                    markers[i] = marker_cars;
+//                                                                                    nearPos = CalculationByDistance(currentPosition, ll, i);
+//
+//
+//                                                                                }
+//                                                                                marker_me.setPosition(currentPosition);
+//                                                                                count++;
+//                                                                            }
+//                                                                        }
+//
+//                                                                    } catch (JSONException e1) {
+//                                                                        e1.printStackTrace();
+//                                                                    }
+//                                                                }
+//                                                            } else {
+//                                                                Log.i("error_car", e.getMessage());
+//                                                            }
+//                                                        }
+//                                                    });
+//                                                } else
+//                                                    Toast.makeText(getActivity(), "Problem with api_token", Toast.LENGTH_SHORT).show();
+//                                            } catch (JSONException e1) {
+//                                                e1.printStackTrace();
+//                                            }
+//                                        }
+//                                    } else {
+//                                        Log.i("error_token", e.getMessage());
+//                                    }
+//                                }
+//                            });
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(doAsynchronousTask, 0, 60000);
+    }
+
+    private void drawMarkerWithoutGps() {
+        // Remove any existing markers on the map
+
+        currentPosition = new LatLng(43.256414, 76.924143);
         pagerLayout.setVisibility(View.VISIBLE);
         Toast.makeText(getActivity(), "drawMarker", Toast.LENGTH_SHORT).show();
         Timer timer = new Timer();

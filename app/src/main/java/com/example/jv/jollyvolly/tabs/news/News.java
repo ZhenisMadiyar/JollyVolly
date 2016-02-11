@@ -98,6 +98,7 @@ public class News extends Fragment {
         sqdbWriteSale = storeDatabaseSale.getWritableDatabase();
         sqdbReadSale = storeDatabaseSale.getReadableDatabase();
 
+
         preferences = getActivity().getSharedPreferences(MyPrefs2, Context.MODE_PRIVATE);
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         if (preferences.getString("last_date", null) == null) {
@@ -107,6 +108,7 @@ public class News extends Fragment {
             editor.apply();
             Log.i("PREFERENCES", "@null");
         } else {
+//            refersh();
             String lastDate = preferences.getString("last_date", "");
             String now = format.format(Calendar.getInstance().getTime());
             Date d1 = null;
@@ -149,110 +151,111 @@ public class News extends Fragment {
         );
 
         parameters = new HashMap<>();
-        if (cursorSale.getCount() == 0) {
-            storeDatabaseSale.cleanTable(sqdbReadSale);
-            ParseCloud.callFunctionInBackground("news_sale", parameters, new FunctionCallback<Object>() {
-                @Override
-                public void done(Object response, ParseException e) {
-                    if (e != null) {
-
+//        if (cursorSale.getCount() == 0) {
+//            storeDatabaseSale.cleanTable(sqdbReadSale);
+        ParseCloud.callFunctionInBackground("news_sale", parameters, new FunctionCallback<Object>() {
+            @Override
+            public void done(Object response, ParseException e) {
+                if (e != null) {
+                    Log.e("Error_news_sale", e.toString());
+                } else {
+                    String json = gson.toJson(response);
+                    if (json.equals("[]")) {
+                        Toast.makeText(getActivity(), "news NULL", Toast.LENGTH_LONG).show();
                     } else {
-                        String json = gson.toJson(response);
-                        if (json.equals("[]")) {
-                            Toast.makeText(getActivity(), "news NULL", Toast.LENGTH_LONG).show();
-                        } else {
-                            Log.i("JSON_SALE", json);
-                            try {
-                                JSONArray jsonArray = new JSONArray(json);
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    JSONObject estimatedData = jsonObject.getJSONObject("estimatedData");
-                                    JSONObject jsonImage = estimatedData.getJSONObject("image");
+                        Log.i("JSON_SALE", json);
+                        try {
+                            JSONArray jsonArray = new JSONArray(json);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                JSONObject estimatedData = jsonObject.getJSONObject("estimatedData");
+                                JSONObject jsonImage = estimatedData.getJSONObject("image");
 
-                                    String objectId = jsonObject.getString("objectId");
-                                    String imageUrl = jsonImage.getString("url");
-                                    String title = estimatedData.getString("title");
-                                    String description = estimatedData.getString("description");
-                                    int like_count = estimatedData.getInt("like_count");
-                                    arrayListNewsSale.add(new NewsSale(objectId, title, description, imageUrl, like_count, 0));
-                                    String insertQuery = "INSERT INTO sale (objectId, title, description, imageUrl, likeCount, liked)" +
-                                            "VALUES ('" + objectId + "','" + title + "','" + description + "'" +
-                                            ",'" + imageUrl + "','" + like_count + "" + "','" + 0 + "')";
-                                    sqdbWriteSale.execSQL(insertQuery);
-                                }
-                                adapter = new CarouselPagerAdapter(News.this, getFragmentManager(), arrayListNewsSale);
-                                viewPagerSale.setAdapter(adapter);
-                                viewPagerSale.setOnPageChangeListener(adapter);
-                                // Set current item to the middle page so we can fling to both
-                                // directions left and right
-                                viewPagerSale.setCurrentItem(arrayListNewsSale.size() * LOOPS / 2);
-                                // Necessary or the pager will only have one extra page to show
-                                // make this at least however many pages you can see
-                                viewPagerSale.setOffscreenPageLimit(2);
-                                // Set margin for pages as a negative number, so a part of next and
-                                // previous pages will be showed
-                                // viewPagerSale.setPageMargin(-200);
-                                dotsCount = arrayListNewsSale.size();
-                                Log.i("CountSale", arrayListNewsSale.size() + "");
-                                dots = new TextView[dotsCount];
-                                for (int j = 0; j < dotsCount; j++) {
-                                    dots[j] = new TextView(getActivity());
-                                    dots[j].setText(Html.fromHtml("&#8226;"));
-                                    dots[j].setTextSize(30);
-                                    dots[j].setTextColor(getResources().getColor(android.R.color.darker_gray));
-                                    dotsLayoutSale.addView(dots[j]);
-                                }
-                                dots[0].setTextColor(getResources().getColor(android.R.color.black));
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
+                                String objectId = jsonObject.getString("objectId");
+                                String imageUrl = jsonImage.getString("url");
+                                String title = estimatedData.getString("title");
+                                String description = estimatedData.getString("description");
+                                int like_count = estimatedData.getInt("like_count");
+                                arrayListNewsSale.add(new NewsSale(objectId, title, description, imageUrl, like_count, 0));
+                                String insertQuery = "INSERT INTO sale (objectId, title, description, imageUrl, likeCount, liked)" +
+                                        "VALUES ('" + objectId + "','" + title + "','" + description + "'" +
+                                        ",'" + imageUrl + "','" + like_count + "" + "','" + 0 + "')";
+                                sqdbWriteSale.execSQL(insertQuery);
                             }
+                            adapter = new CarouselPagerAdapter(News.this, getFragmentManager(), arrayListNewsSale);
+                            viewPagerSale.setAdapter(adapter);
+                            viewPagerSale.setOnPageChangeListener(adapter);
+                            // Set current item to the middle page so we can fling to both
+                            // directions left and right
+                            viewPagerSale.setCurrentItem(arrayListNewsSale.size() * LOOPS / 2);
+                            // Necessary or the pager will only have one extra page to show
+                            // make this at least however many pages you can see
+                            viewPagerSale.setOffscreenPageLimit(2);
+                            // Set margin for pages as a negative number, so a part of next and
+                            // previous pages will be showed
+                            // viewPagerSale.setPageMargin(-200);
+                            dotsCount = arrayListNewsSale.size();
+                            Log.i("CountSale", arrayListNewsSale.size() + "");
+                            dots = new TextView[dotsCount];
+                            for (int j = 0; j < dotsCount; j++) {
+                                dots[j] = new TextView(getActivity());
+                                dots[j].setText(Html.fromHtml("&#8226;"));
+                                dots[j].setTextSize(30);
+                                dots[j].setTextColor(getResources().getColor(android.R.color.darker_gray));
+                                dotsLayoutSale.addView(dots[j]);
+                            }
+                            dots[0].setTextColor(getResources().getColor(android.R.color.black));
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
                         }
                     }
                 }
-            });
-        } else {
-//            arrayListNewsComp.clear();
-            while (cursorSale.moveToNext()) {
-                Log.i("DatabaseSale", "isNotNull");
-                String objectId = cursorSale.getString(cursorSale.getColumnIndex("objectId"));
-                Log.i("objectIdSqliteSale", objectId);
-                String title = cursorSale.getString(cursorSale.getColumnIndex("title"));
-                String description = cursorSale.getString(cursorSale.getColumnIndex("description"));
-                String imageUrl = cursorSale.getString(cursorSale.getColumnIndex("imageUrl"));
-                String likeCount = cursorSale.getString(cursorSale.getColumnIndex("likeCount"));
-                int like_count = Integer.parseInt(likeCount);
-                int liked = cursorSale.getInt(cursorSale.getColumnIndex("liked"));
-                Log.i("LikeCountSale", likeCount);
-                Log.i("liked_cursorSale", liked + "");
-                arrayListNewsSale.add(new NewsSale(objectId, title, description, imageUrl, like_count, liked));
-                Log.i("DatabaseNewsCursorSale", title + " " + likeCount);
             }
-            adapter = new CarouselPagerAdapter(News.this, getFragmentManager(), arrayListNewsSale);
-            viewPagerSale.setAdapter(adapter);
-            viewPagerSale.setOnPageChangeListener(adapter);
-            // Set current item to the middle page so we can fling to both
-            // directions left and right
-            viewPagerSale.setCurrentItem(arrayListNewsSale.size() * LOOPS / 2);
-            // Necessary or the pager will only have one extra page to show
-            // make this at least however many pages you can see
-            viewPagerSale.setOffscreenPageLimit(2);
-            // Set margin for pages as a negative number, so a part of next and
-            // previous pages will be showed
-            // viewPagerSale.setPageMargin(-200);
-            dotsCount = arrayListNewsSale.size();
-            Log.i("CountSale", arrayListNewsSale.size() + "");
-            dots = new TextView[dotsCount];
-            for (int j = 0; j < dotsCount; j++) {
-                dots[j] = new TextView(getActivity());
-                dots[j].setText(Html.fromHtml("&#8226;"));
-                dots[j].setTextSize(30);
-                dots[j].setTextColor(getResources().getColor(android.R.color.darker_gray));
-                dotsLayoutSale.addView(dots[j]);
-            }
-            dots[0].setTextColor(getResources().getColor(android.R.color.black));
-
-            cursorSale.close();
-        }
+        });
+//        } else {
+//            Toast.makeText(getActivity(), "SQL full", Toast.LENGTH_SHORT).show();
+////            arrayListNewsComp.clear();
+//            while (cursorSale.moveToNext()) {
+//                Log.i("DatabaseSale", "isNotNull");
+//                String objectId = cursorSale.getString(cursorSale.getColumnIndex("objectId"));
+//                Log.i("objectIdSqliteSale", objectId);
+//                String title = cursorSale.getString(cursorSale.getColumnIndex("title"));
+//                String description = cursorSale.getString(cursorSale.getColumnIndex("description"));
+//                String imageUrl = cursorSale.getString(cursorSale.getColumnIndex("imageUrl"));
+//                String likeCount = cursorSale.getString(cursorSale.getColumnIndex("likeCount"));
+//                int like_count = Integer.parseInt(likeCount);
+//                int liked = cursorSale.getInt(cursorSale.getColumnIndex("liked"));
+//                Log.i("LikeCountSale", likeCount);
+//                Log.i("liked_cursorSale", liked + "");
+//                arrayListNewsSale.add(new NewsSale(objectId, title, description, imageUrl, like_count, liked));
+//                Log.i("DatabaseNewsCursorSale", title + " " + likeCount);
+//            }
+//            adapter = new CarouselPagerAdapter(News.this, getFragmentManager(), arrayListNewsSale);
+//            viewPagerSale.setAdapter(adapter);
+//            viewPagerSale.setOnPageChangeListener(adapter);
+//            // Set current item to the middle page so we can fling to both
+//            // directions left and right
+//            viewPagerSale.setCurrentItem(arrayListNewsSale.size() * LOOPS / 2);
+//            // Necessary or the pager will only have one extra page to show
+//            // make this at least however many pages you can see
+//            viewPagerSale.setOffscreenPageLimit(2);
+//            // Set margin for pages as a negative number, so a part of next and
+//            // previous pages will be showed
+//            // viewPagerSale.setPageMargin(-200);
+//            dotsCount = arrayListNewsSale.size();
+//            Log.i("CountSale", arrayListNewsSale.size() + "");
+//            dots = new TextView[dotsCount];
+//            for (int j = 0; j < dotsCount; j++) {
+//                dots[j] = new TextView(getActivity());
+//                dots[j].setText(Html.fromHtml("&#8226;"));
+//                dots[j].setTextSize(30);
+//                dots[j].setTextColor(getResources().getColor(android.R.color.darker_gray));
+//                dotsLayoutSale.addView(dots[j]);
+//            }
+//            dots[0].setTextColor(getResources().getColor(android.R.color.black));
+//
+//            cursorSale.close();
+//        }
 
 
         storeDatabase = new StoreDatabaseNews(getActivity());
@@ -272,115 +275,115 @@ public class News extends Fragment {
 
         viewPagerNews = (ViewPager) view.findViewById(R.id.viewpagernews);
         Log.i("CursorSize", cursor.getCount() + "");
-        if (cursor.getCount() == 0) {
-            Log.i("DatabaseNews", "Null");
-            storeDatabase.cleanTable(sqdbRead);
-            ParseCloud.callFunctionInBackground("news_competition", parameters, new FunctionCallback<Object>() {
-                @Override
-                public void done(Object response, ParseException e) {
-                    if (e != null) {
+//        if (cursor.getCount() == 0) {
+//            Log.i("DatabaseNews", "Null");
+//            storeDatabase.cleanTable(sqdbRead);
+        ParseCloud.callFunctionInBackground("news_competition", parameters, new FunctionCallback<Object>() {
+            @Override
+            public void done(Object response, ParseException e) {
+                if (e != null) {
 
+                } else {
+                    String json = gson.toJson(response);
+                    if (json.equals("[]")) {
+                        Toast.makeText(getActivity(), "newsComp NULL", Toast.LENGTH_LONG).show();
                     } else {
-                        String json = gson.toJson(response);
-                        if (json.equals("[]")) {
-                            Toast.makeText(getActivity(), "newsComp NULL", Toast.LENGTH_LONG).show();
-                        } else {
-                            Log.i("JSON_COMP", json);
-                            try {
-                                JSONArray jsonArray = new JSONArray(json);
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    JSONObject estimatedData = jsonObject.getJSONObject("estimatedData");
-                                    JSONObject jsonImage = estimatedData.getJSONObject("image");
+                        Log.i("JSON_COMP", json);
+                        try {
+                            JSONArray jsonArray = new JSONArray(json);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                JSONObject estimatedData = jsonObject.getJSONObject("estimatedData");
+                                JSONObject jsonImage = estimatedData.getJSONObject("image");
 
-                                    String objectId = jsonObject.getString("objectId");
-                                    String imageUrl = jsonImage.getString("url");
-                                    String title = estimatedData.getString("title");
-                                    String description = estimatedData.getString("description");
-                                    int like_count = estimatedData.getInt("like_count");
-                                    arrayListNewsComp.add(new NewsComp(objectId, title, description, imageUrl, like_count, 0));
-                                    Log.i("objectIdSqlite", objectId);
-                                    String insertQuery = "INSERT INTO news (objectId, title, description, imageUrl, likeCount, liked)" +
-                                            "VALUES ('" + objectId + "','" + title + "','" + description + "'" +
-                                            ",'" + imageUrl + "','" + like_count + "" + "','" + 0 + "')";
-                                    sqdbWrite.execSQL(insertQuery);
-                                }
-                                adapterNews = new CarouselPagerAdapterNews(News.this, getFragmentManager(), arrayListNewsComp);
-                                viewPagerNews.setAdapter(adapterNews);
-                                viewPagerNews.setOnPageChangeListener(adapterNews);
-                                // Set current item to the middle page so we can fling to both
-                                // directions left and right
-                                viewPagerNews.setCurrentItem(arrayListNewsComp.size() * LOOPS / 2);
-                                // Necessary or the pager will only have one extra page to show
-                                // make this at least however many pages you can see
-                                viewPagerNews.setOffscreenPageLimit(2);
-                                Log.i("2", arrayListNewsComp.get(1).getDescription());
-                                adapterNews.notifyDataSetChanged();
-                                // Set margin for pages as a negative number, so a part of next and
-                                // previous pages will be showed
-//                            viewPagerNews.setPageMargin(-50);dotsCount = arrayListNewsSale.size();
-                                dotsCountCorp = arrayListNewsComp.size();
-                                Log.i("CountComp", arrayListNewsComp.size() + "");
-                                dotsCorp = new TextView[dotsCountCorp];
-                                for (int j = 0; j < dotsCountCorp; j++) {
-                                    dotsCorp[j] = new TextView(getActivity());
-                                    dotsCorp[j].setText(Html.fromHtml("&#8226;"));
-                                    dotsCorp[j].setTextSize(30);
-                                    dotsCorp[j].setTextColor(getResources().getColor(android.R.color.darker_gray));
-                                    dotsLayoutCorp.addView(dotsCorp[j]);
-                                }
-                                dotsCorp[0].setTextColor(getResources().getColor(android.R.color.black));
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
+                                String objectId = jsonObject.getString("objectId");
+                                String imageUrl = jsonImage.getString("url");
+                                String title = estimatedData.getString("title");
+                                String description = estimatedData.getString("description");
+                                int like_count = estimatedData.getInt("like_count");
+                                arrayListNewsComp.add(new NewsComp(objectId, title, description, imageUrl, like_count, 0));
+                                Log.i("objectIdSqlite", objectId);
+                                String insertQuery = "INSERT INTO news (objectId, title, description, imageUrl, likeCount, liked)" +
+                                        "VALUES ('" + objectId + "','" + title + "','" + description + "'" +
+                                        ",'" + imageUrl + "','" + like_count + "" + "','" + 0 + "')";
+                                sqdbWrite.execSQL(insertQuery);
                             }
+                            adapterNews = new CarouselPagerAdapterNews(News.this, getFragmentManager(), arrayListNewsComp);
+                            viewPagerNews.setAdapter(adapterNews);
+                            viewPagerNews.setOnPageChangeListener(adapterNews);
+                            // Set current item to the middle page so we can fling to both
+                            // directions left and right
+                            viewPagerNews.setCurrentItem(arrayListNewsComp.size() * LOOPS / 2);
+                            // Necessary or the pager will only have one extra page to show
+                            // make this at least however many pages you can see
+                            viewPagerNews.setOffscreenPageLimit(2);
+                            Log.i("2", arrayListNewsComp.get(1).getDescription());
+                            adapterNews.notifyDataSetChanged();
+                            // Set margin for pages as a negative number, so a part of next and
+                            // previous pages will be showed
+//                            viewPagerNews.setPageMargin(-50);dotsCount = arrayListNewsSale.size();
+                            dotsCountCorp = arrayListNewsComp.size();
+                            Log.i("CountComp", arrayListNewsComp.size() + "");
+                            dotsCorp = new TextView[dotsCountCorp];
+                            for (int j = 0; j < dotsCountCorp; j++) {
+                                dotsCorp[j] = new TextView(getActivity());
+                                dotsCorp[j].setText(Html.fromHtml("&#8226;"));
+                                dotsCorp[j].setTextSize(30);
+                                dotsCorp[j].setTextColor(getResources().getColor(android.R.color.darker_gray));
+                                dotsLayoutCorp.addView(dotsCorp[j]);
+                            }
+                            dotsCorp[0].setTextColor(getResources().getColor(android.R.color.black));
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
                         }
                     }
                 }
-            });
-        } else {
-//            arrayListNewsComp.clear();
-            while (cursor.moveToNext()) {
-                Log.i("DatabaseNews", "isNotNull");
-                String objectId = cursor.getString(cursor.getColumnIndex("objectId"));
-                Log.i("objectIdSqlite", objectId);
-                String title = cursor.getString(cursor.getColumnIndex("title"));
-                String description = cursor.getString(cursor.getColumnIndex("description"));
-                String imageUrl = cursor.getString(cursor.getColumnIndex("imageUrl"));
-                String likeCount = cursor.getString(cursor.getColumnIndex("likeCount"));
-                int like_count = Integer.parseInt(likeCount);
-                int liked = cursor.getInt(cursor.getColumnIndex("liked"));
-                Log.i("LikeCount", likeCount);
-                Log.i("liked_cursor", liked + "");
-                arrayListNewsComp.add(new NewsComp(objectId, title, description, imageUrl, like_count, liked));
-                Log.i("DatabaseNewsCursor", title + " " + likeCount);
             }
-            adapterNews = new CarouselPagerAdapterNews(News.this, getFragmentManager(), arrayListNewsComp);
-            viewPagerNews.setAdapter(adapterNews);
-            viewPagerNews.setOnPageChangeListener(adapterNews);
-            // Set current item to the middle page so we can fling to both
-            // directions left and right
-            viewPagerNews.setCurrentItem(arrayListNewsComp.size() * LOOPS / 2);
-            // Necessary or the pager will only have one extra page to show
-            // make this at least however many pages you can see
-            viewPagerNews.setOffscreenPageLimit(2);
-//            Log.i("2", arrayListNewsComp.get(1).getDescription());
-            // Set margin for pages as a negative number, so a part of next and
-            // previous pages will be showed
-//                            viewPagerNews.setPageMargin(-50);dotsCount = arrayListNewsSale.size();
-            dotsCountCorp = arrayListNewsComp.size();
-            Log.i("CountComp", arrayListNewsComp.size() + "");
-            dotsCorp = new TextView[dotsCountCorp];
-            for (int j = 0; j < dotsCountCorp; j++) {
-                dotsCorp[j] = new TextView(getActivity());
-                dotsCorp[j].setText(Html.fromHtml("&#8226;"));
-                dotsCorp[j].setTextSize(30);
-                dotsCorp[j].setTextColor(getResources().getColor(android.R.color.darker_gray));
-                dotsLayoutCorp.addView(dotsCorp[j]);
-            }
-            dotsCorp[0].setTextColor(getResources().getColor(android.R.color.black));
-
-            cursor.close();
-        }
+        });
+//        } else {
+////            arrayListNewsComp.clear();
+//            while (cursor.moveToNext()) {
+//                Log.i("DatabaseNews", "isNotNull");
+//                String objectId = cursor.getString(cursor.getColumnIndex("objectId"));
+//                Log.i("objectIdSqlite", objectId);
+//                String title = cursor.getString(cursor.getColumnIndex("title"));
+//                String description = cursor.getString(cursor.getColumnIndex("description"));
+//                String imageUrl = cursor.getString(cursor.getColumnIndex("imageUrl"));
+//                String likeCount = cursor.getString(cursor.getColumnIndex("likeCount"));
+//                int like_count = Integer.parseInt(likeCount);
+//                int liked = cursor.getInt(cursor.getColumnIndex("liked"));
+//                Log.i("LikeCount", likeCount);
+//                Log.i("liked_cursor", liked + "");
+//                arrayListNewsComp.add(new NewsComp(objectId, title, description, imageUrl, like_count, liked));
+//                Log.i("DatabaseNewsCursor", title + " " + likeCount);
+//            }
+//            adapterNews = new CarouselPagerAdapterNews(News.this, getFragmentManager(), arrayListNewsComp);
+//            viewPagerNews.setAdapter(adapterNews);
+//            viewPagerNews.setOnPageChangeListener(adapterNews);
+//            // Set current item to the middle page so we can fling to both
+//            // directions left and right
+//            viewPagerNews.setCurrentItem(arrayListNewsComp.size() * LOOPS / 2);
+//            // Necessary or the pager will only have one extra page to show
+//            // make this at least however many pages you can see
+//            viewPagerNews.setOffscreenPageLimit(2);
+////            Log.i("2", arrayListNewsComp.get(1).getDescription());
+//            // Set margin for pages as a negative number, so a part of next and
+//            // previous pages will be showed
+////                            viewPagerNews.setPageMargin(-50);dotsCount = arrayListNewsSale.size();
+//            dotsCountCorp = arrayListNewsComp.size();
+//            Log.i("CountComp", arrayListNewsComp.size() + "");
+//            dotsCorp = new TextView[dotsCountCorp];
+//            for (int j = 0; j < dotsCountCorp; j++) {
+//                dotsCorp[j] = new TextView(getActivity());
+//                dotsCorp[j].setText(Html.fromHtml("&#8226;"));
+//                dotsCorp[j].setTextSize(30);
+//                dotsCorp[j].setTextColor(getResources().getColor(android.R.color.darker_gray));
+//                dotsLayoutCorp.addView(dotsCorp[j]);
+//            }
+//            dotsCorp[0].setTextColor(getResources().getColor(android.R.color.black));
+//
+//            cursor.close();
+//        }
         return view;
     }
 

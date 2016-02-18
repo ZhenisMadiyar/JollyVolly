@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
 
-    <com.example.jv.jollyvolly.tabs.news.carouselSale.MyLinearLayout
+    <com.kz.jv.jollyvolly.tabs.news.carouselSale.MyLinearLayout
         android:id="@+id/rootSale"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -107,6 +107,6 @@
         </LinearLayout>
 
 
-    </com.example.jv.jollyvolly.tabs.news.carouselSale.MyLinearLayout>
+    </com.kz.jv.jollyvolly.tabs.news.carouselSale.MyLinearLayout>
 
 </RelativeLayout>

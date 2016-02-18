@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
 
-    <com.example.jv.jollyvolly.tabs.news.carouselNews.MyLinearLayoutNews
+    <com.kz.jv.jollyvolly.tabs.news.carouselNews.MyLinearLayoutNews
         android:id="@+id/root1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -108,6 +108,6 @@
         </LinearLayout>
 
 
-    </com.example.jv.jollyvolly.tabs.news.carouselNews.MyLinearLayoutNews>
+    </com.kz.jv.jollyvolly.tabs.news.carouselNews.MyLinearLayoutNews>
 
 </RelativeLayout>
